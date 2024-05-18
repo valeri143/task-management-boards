@@ -1,65 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import BoardIdForm from './components/BoardIdForm/BoardIdForm';
+import Board from './components/Board/Board';
 import './App.css';
 
-function App() {
-  const [data, setData] = useState(null);
+function App(): JSX.Element {
+  const [boardData, setBoardData] = useState({
+    _id: "",
+    name: "",
+    ToDo: [],
+    InProgress: [],
+    Done: []
+  });
 
-  useEffect(() => {
-    fetch('/api')
-    .then(res => res.json())
-    .then(res => setData(res.message))
-  },[])
+  const handleSubmit = (values: { boardId: string }) => {
+    console.log('Отправлен ID доски:', values.boardId);
+    fetch(`/api/boards/${values.boardId}`)
+      .then(res => res.json())
+      .then(res => {
+        setBoardData(res.data.board);
+        console.log(res.data.board); 
+      })
+      .catch(error => console.error('The error occurred:', error));
+  };
 
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        {data ? <p>{data}</p> : <p>Loading...</p>}
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
       </header>
+      <main>
+        <BoardIdForm onSubmit={handleSubmit}/>
+      {/* <Counter /> */}
+        <Board board={boardData}/>
+      </main>
     </div>
   );
 }
