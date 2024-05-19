@@ -14,6 +14,7 @@ export const StyledDiv = styled.div`
     padding: 20px 15px;
     min-width: 220px;
     min-height: 200px;
+    height: 300px;
     transition: all 0.3s ease;
     &:hover, &:focus {
     box-shadow: inset 0px -20px 20px #ffffff;

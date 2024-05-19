@@ -147,7 +147,74 @@ const getCardsById = async (req, res, next) => {
       res.status(404).json({
         status: 'error',
         code: 404,
-        message: `Not found task id: ${id}`,
+        message: `Not found card id: ${id}`,
+        data: 'Not Found',
+      })
+    }
+  } catch (e) {
+    console.error(e)
+    next(e)
+  }
+}
+
+const createNewCard = async (req, res, next) => {
+  const { title, description, column, boardId } = req.body
+  try {
+    const result = await service.createCard({ title, description, column, boardId })
+
+    res.status(201).json({
+      status: 'success',
+      code: 201,
+      data: { card: result },
+    })
+  } catch (e) {
+    console.error(e)
+    next(e)
+  }
+}
+
+const removeOneCard = async (req, res, next) => {
+  const { id } = req.params
+
+  try {
+    const result = await service.removeCard(id)
+    console.log(result)
+    if (result) {
+      res.json({
+        status: 'success',
+        code: 200,
+        data: { card: result },
+      })
+    } else {
+      res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: `Not found card id: ${id}`,
+        data: 'Not Found',
+      })
+    }
+  } catch (e) {
+    console.error(e)
+    next(e)
+  }
+}
+
+const updateOneCard = async (req, res, next) => {
+  const { id } = req.params
+  const { title, description } = req.body;
+  try {
+    const result =  await service.updateCard(id, { title, description })
+    if (result) {
+      res.json({
+        status: 'success',
+        code: 200,
+        data: { card: result },
+      })
+    } else {
+      res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: `Not found card id: ${id}`,
         data: 'Not Found',
       })
     }
@@ -158,6 +225,7 @@ const getCardsById = async (req, res, next) => {
 }
 
 
+
 module.exports = {
   get,
   getById,
@@ -165,5 +233,8 @@ module.exports = {
   update,
   updateStatus,
   remove,
-  getCardsById
+  getCardsById,
+  createNewCard,
+  removeOneCard,
+  updateOneCard
 }

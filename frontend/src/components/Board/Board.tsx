@@ -18,9 +18,9 @@ interface BoardProps {
   
     return (
         <StyledDiv>
-          <Column title="To Do" cards={toDoTasks} />
-          <Column title="In Progress" cards={inProgressTasks} />
-          <Column title="Done" cards={doneTasks} />
+          <Column title="To Do" cards={toDoTasks} boardId={board._id}/>
+          <Column title="In Progress" cards={inProgressTasks} boardId={board._id}/>
+          <Column title="Done" cards={doneTasks} boardId={board._id}/>
         </StyledDiv>
     );
   };

@@ -18,4 +18,10 @@ router.delete('/boards/:id', ctrlBoard.remove)
 // cards
 router.get('/cards/:id', ctrlBoard.getCardsById)
 
+router.post('/cards', ctrlBoard.createNewCard)
+
+router.delete('/cards/:id', ctrlBoard.removeOneCard)
+
+router.put('/cards/:id', ctrlBoard.updateOneCard)
+
 module.exports = router

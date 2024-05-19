@@ -44,6 +44,7 @@ export const StyledButton = styled.button`
 export const StyledErrorMessage = styled(ErrorMessage)`
     font-weight: bold;
     text-align: left;
+    color: red;
 `
 
 export {};

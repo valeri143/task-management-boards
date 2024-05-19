@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import SwiperCore, { Virtual } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/swiper-bundle.css';
+import { ToastContainer, toast } from "react-toastify";
 import { Task } from "../Card/Card";
 import Card from "../Card/Card";
+import EditModal from "../EditModal/EditModal";
 import { StyledDiv, StyledH2, StyledButton } from "./Column.styled";
 import sprite from "../../assets/sprite.svg"
 
-
+// SwiperCore.use([Virtual]);
 interface ColumnProps {
     title: string;
     cards: string[];
+    boardId: string;
   }
   
-  const Column: React.FC<ColumnProps> = ({ title, cards }) => {
+  const Column: React.FC<ColumnProps> = ({ title, cards, boardId }) => {
     const [cardData, setCardData] = useState<Task[]>([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchCardData = async () => {
@@ -27,35 +34,51 @@ interface ColumnProps {
         fetchCardData();
     }, [cards]);
 
-    const handleClick = async () => {
+    const handleCreateSubmit = async (title: string, description: string) => {
       try {
         const newCardData = {
-          title: 'New Task',
-          description: 'Description for new task',
-          column: 'To Do'
+          title,
+          description,
+          column: 'To Do',
+          boardId
         };
+
         const response = await axios.post<{ data: { card: Task } }>('/api/cards', newCardData);
         const newCard = response.data.data.card;
         setCardData((prevCards) => [...prevCards, newCard]);
-        console.log("Added new card to column: " + title);
+        setIsModalVisible(false);
+        toast.success("The card was successfully added");
       } catch (error) {
         console.error("Error adding new card:", error);
+        toast.error("Error adding new card");
       }
     }
+    
+    const handleDelete = (cardId: string) => {
+      setCardData((prevCards) => prevCards.filter(card => card._id !== cardId));
+    };
+  
     return (
       <div>
         <StyledH2>{title}</StyledH2>
        <StyledDiv>
        {cardData.map(card => (
-          <Card key={card._id} card={card} />
+          <Card key={card._id} card={card} handleDelete={handleDelete}/>
         ))}
         {title === "To Do" && 
-          <StyledButton onClick={handleClick}>
+          <StyledButton onClick={() => setIsModalVisible(true)}>
             <svg width="50" height="50">
               <use href={`${sprite}#icon-plus`}></use>
             </svg>
           </StyledButton>}
+          <ToastContainer/>
        </StyledDiv>
+       <EditModal
+        isOpen={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)}
+        onSubmit={handleCreateSubmit}
+        contentLabel="Create New Card"
+      />
       </div>
     );
   };
