@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import SwiperCore, { Virtual } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/swiper-bundle.css';
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { Task } from "../Card/Card";
 import Card from "../Card/Card";
 import EditModal from "../EditModal/EditModal";
 import { StyledDiv, StyledH2, StyledButton } from "./Column.styled";
 import sprite from "../../assets/sprite.svg"
 
-// SwiperCore.use([Virtual]);
 interface ColumnProps {
     title: string;
     cards: string[];
@@ -59,19 +55,19 @@ interface ColumnProps {
     };
   
     return (
-      <div>
+            <div>
         <StyledH2>{title}</StyledH2>
        <StyledDiv>
        {cardData.map(card => (
-          <Card key={card._id} card={card} handleDelete={handleDelete}/>
+             <Card key={card._id} card={card} handleDelete={handleDelete}/>
         ))}
-        {title === "To Do" && 
-          <StyledButton onClick={() => setIsModalVisible(true)}>
-            <svg width="50" height="50">
-              <use href={`${sprite}#icon-plus`}></use>
-            </svg>
-          </StyledButton>}
-          <ToastContainer/>
+        {title === "To Do" && boardId && 
+         <StyledButton onClick={() => setIsModalVisible(true)}>
+          <svg width="50" height="50">
+            <use href={`${sprite}#icon-plus`}></use>
+          </svg>
+        </StyledButton>
+          }
        </StyledDiv>
        <EditModal
         isOpen={isModalVisible}

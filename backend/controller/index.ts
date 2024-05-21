@@ -7,7 +7,7 @@ const get = async (req, res, next) => {
       status: 'success',
       code: 200,
       data: {
-        tasks: results,
+        boards: results,
       },
     }) 
   } catch (e) {
@@ -41,14 +41,14 @@ const getById = async (req, res, next) => {
 }
 
 const create = async (req, res, next) => {
-  const { title, text } = req.body
+  const { name } = req.body
   try {
-    const result = await service.createTask({ title, text })
+    const result = await service.createBoard({ name })
 
     res.status(201).json({
       status: 'success',
       code: 201,
-      data: { task: result },
+      data: { board: result },
     })
   } catch (e) {
     console.error(e)
@@ -58,20 +58,20 @@ const create = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   const { id } = req.params
-  const { title, text } = req.body
+  const { name } = req.body
   try {
-    const result = await service.updateTask(id, { title, text })
+    const result = await service.updateBoard(id, { name })
     if (result) {
       res.json({
         status: 'success',
         code: 200,
-        data: { task: result },
+        data: { board: result },
       })
     } else {
       res.status(404).json({
         status: 'error',
         code: 404,
-        message: `Not found task id: ${id}`,
+        message: `Not found board id: ${id}`,
         data: 'Not Found',
       })
     }
@@ -111,12 +111,12 @@ const remove = async (req, res, next) => {
   const { id } = req.params
 
   try {
-    const result = await service.removeTask(id)
+    const result = await service.removeBoard(id)
     if (result) {
       res.json({
         status: 'success',
         code: 200,
-        data: { task: result },
+        data: { board: result },
       })
     } else {
       res.status(404).json({
@@ -178,7 +178,6 @@ const removeOneCard = async (req, res, next) => {
 
   try {
     const result = await service.removeCard(id)
-    console.log(result)
     if (result) {
       res.json({
         status: 'success',

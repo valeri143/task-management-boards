@@ -1,7 +1,6 @@
 import React,{ useState } from 'react';
 import axios from 'axios';
-import {ToastContainer, toast} from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import CustomModal from '../CustomModal/CustomModal';
 import EditModal from '../EditModal/EditModal';
 import { StyledDiv, StyledH3, StyledP, StyledSvgDiv } from './Card.styled';
@@ -32,15 +31,6 @@ const Card: React.FC<TaskProps> = ({ card, handleDelete }) => {
     }
   };
 
-  const handleConfirmDelete = () => {
-    setIsModalVisible(false);
-    onDelete();
-  };
-
-  const handleCancelDelete = () => {
-    setIsModalVisible(false);
-  };
-
   const handleEditSubmit = async (title: string, description: string) => {
     try {
       await axios.put(`/api/cards/${card._id}`, { title, description });
@@ -52,10 +42,6 @@ const Card: React.FC<TaskProps> = ({ card, handleDelete }) => {
       console.error('Error editing card:', error);
       toast.error('Error editing card');
     }
-  };
-
-  const handleEditCancel = () => {
-    setIsEditModalVisible(false);
   };
 
   return (
@@ -74,23 +60,21 @@ const Card: React.FC<TaskProps> = ({ card, handleDelete }) => {
       </svg>
       </button>
       </StyledSvgDiv>
-      <ToastContainer/>
       <CustomModal
         isOpen={isModalVisible}
-        onRequestClose={handleCancelDelete}
-        onConfirm={handleConfirmDelete}
+        onRequestClose={() => setIsModalVisible(false)}
+        onConfirm={() => {setIsModalVisible(false); onDelete();}}
         contentLabel="Confirm Delete"
         message="Are you sure that you want to delete this card?"
       />
        <EditModal
         isOpen={isEditModalVisible}
-        onRequestClose={handleEditCancel}
+        onRequestClose={() => setIsEditModalVisible(false)}
         onSubmit={handleEditSubmit}
         contentLabel="Edit Card"
         initialTitle={card.title}
         initialDescription={card.description}
       />
-     
     </StyledDiv>
   );
 };

@@ -10,16 +10,16 @@ const getBoardById = (id) => {
   return Board.findOne({ _id: id })
 }
 
-const createTask = ({ title, text }) => {
-  return Board.create({ title, text })
+const createBoard = ({ name }) => {
+  return Board.create({ name })
 }
 
-const updateTask = (id, fields) => {
+const updateBoard = (id, fields) => {
   return Board.findByIdAndUpdate({ _id: id }, fields, { new: true })
 }
 
-const removeTask = (id) => {
-  return Board.findByIdAndRemove({ _id: id })
+const removeBoard = (id) => {
+  return Board.findByIdAndDelete({ _id: id })
 }
 
 // cards
@@ -65,9 +65,9 @@ const updateCard = (id: string,  updateData: { title: string; description: strin
 module.exports = {
   getAlltasks,
   getBoardById,
-  createTask,
-  updateTask,
-  removeTask,
+  createBoard,
+  updateBoard,
+  removeBoard,
   getCardById,
   createCard,
   removeCard,

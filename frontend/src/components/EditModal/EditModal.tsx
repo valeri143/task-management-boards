@@ -7,7 +7,7 @@ import { StyledButton } from '../CustomModal/CustomModal.styled';
 import { StyledForm, StyledField} from './EditModal.styled';
 import { StyledErrorMessage } from '../BoardIdForm/BoardIdForm.styled';
 
-interface EditModalProps {
+export interface EditModalProps {
     isOpen: boolean;
     onRequestClose: () => void;
     onSubmit: (title: string, description: string) => void;

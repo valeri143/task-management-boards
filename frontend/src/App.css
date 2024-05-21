@@ -3,26 +3,14 @@
 }
 
 .App-logo {
-  height: 40vmin;
   pointer-events: none;
+  width: 50px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-float infinite 3s ease-in-out;
   }
-}
-
-.App-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-}
-
-.App-link {
-  color: rgb(112, 76, 182);
 }
 
 @keyframes App-logo-float {
@@ -35,4 +23,25 @@
   100% {
     transform: translateY(0px);
   }
+}
+
+.container {
+ background-color:  #007bff;
+ padding: 30px;
+ margin-bottom: 30px;
+}
+
+.board{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-around;
+}
+
+.board-info{
+  font-weight: bold;
+}
+
+.board-button{
+  margin-right: 10px;
 }
