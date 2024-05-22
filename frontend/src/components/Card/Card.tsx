@@ -1,47 +1,33 @@
 import React,{ useState } from 'react';
-import axios from 'axios';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { editCard, deleteCard } from "../../redux/cardsListSlice/operations";
+import { selectError } from "../../redux/cardsListSlice/selectors";
 import { toast } from 'react-toastify';
+import { Task } from '../../redux/types/types';
 import CustomModal from '../CustomModal/CustomModal';
 import EditModal from '../EditModal/EditModal';
 import { StyledDiv, StyledH3, StyledP, StyledSvgDiv } from './Card.styled';
 import sprite from '../../assets/sprite.svg'
 
-export interface Task {
-  _id: string;
-  title: string;
-  description: string;
-}
 
 interface TaskProps {
   card: Task;
-  handleDelete: (cardId: string) => void;
 }
 
-const Card: React.FC<TaskProps> = ({ card, handleDelete }) => {
+const Card: React.FC<TaskProps> = ({ card}) => {
+  const error = useAppSelector(selectError);
+  const dispatch = useAppDispatch();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const onDelete = async () => {
-    try {
-      await axios.delete(`/api/cards/${card._id}`);
-      handleDelete(card._id);
-      toast.success('The card was successfully deleted');
-    } catch (error) {
-      console.error('Error deleting card:', error);
-      toast.error('Error deleting card');
-    }
+    dispatch(deleteCard({ cardId: card._id }));
+    !error ? toast.success('The card was successfully deleted') : toast.error('Error deleting card');
   };
 
   const handleEditSubmit = async (title: string, description: string) => {
-    try {
-      await axios.put(`/api/cards/${card._id}`, { title, description });
-      card.title = title;
-      card.description = description;
+    dispatch(editCard({ cardId: card._id, title, description }));
       setIsEditModalVisible(false);
-      toast.success('The card was successfully edited');
-    } catch (error) {
-      console.error('Error editing card:', error);
-      toast.error('Error editing card');
-    }
+      !error ? toast.success('The card was successfully edited') : toast.error('Error editing card');
   };
 
   return (

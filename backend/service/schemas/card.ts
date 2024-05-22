@@ -20,6 +20,11 @@ const card = new Schema(
       type: String,
       required: true,
       enum: ['To Do', 'In Progress', 'Done'] 
+    },
+    boardId:{
+      type: String,
+      required: true,
+      ref: 'boards'
     }
   },
   { versionKey: false}

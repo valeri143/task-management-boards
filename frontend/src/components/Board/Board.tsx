@@ -1,17 +1,13 @@
 import React from "react";
 import Column from "../Column/Column";
 import { StyledDiv } from "./Board.styled";
+import { BoardType } from "../../redux/types/types";
 interface BoardProps {
-    board: {
-      _id: string;
-      name: string;
-      ToDo: string[];
-      InProgress: string[];
-      Done: string[];
-    };
+    board: BoardType | null
   }
   
   const Board: React.FC<BoardProps> = ({ board }) => {  
+    if (!board) return null;
     const toDoTasks: string[] = board.ToDo; 
     const inProgressTasks: string[] = board.InProgress; 
     const doneTasks: string[] = board.Done; 

@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect, useMemo } from "react";
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { addCard, getCardById } from "../../redux/cardsListSlice/operations";
+import { selectCards, selectError } from "../../redux/cardsListSlice/selectors";
+import { resetCards } from "../../redux/cardsListSlice/cardsListSlice";
 import { toast } from "react-toastify";
-import { Task } from "../Card/Card";
+import { Task } from "../../redux/types/types";
 import Card from "../Card/Card";
 import EditModal from "../EditModal/EditModal";
 import { StyledDiv, StyledH2, StyledButton } from "./Column.styled";
@@ -14,52 +17,47 @@ interface ColumnProps {
   }
   
   const Column: React.FC<ColumnProps> = ({ title, cards, boardId }) => {
-    const [cardData, setCardData] = useState<Task[]>([]);
+    const cardData = useAppSelector(selectCards);
+    const error = useAppSelector(selectError);
+    const dispatch = useAppDispatch();
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
-        const fetchCardData = async () => {
-          const data = await Promise.all(
-            cards.map((cardId) =>
-              axios.get<{ data: { card: Task } }>(`/api/cards/${cardId}`).then((res) => res.data.data.card)
-            )
-          );
-          setCardData(data);
-        };
-
-        fetchCardData();
-    }, [cards]);
+        dispatch(resetCards());
+        cards.forEach((cardId) => {
+          dispatch(getCardById({cardId}));
+        })
+    }, [cards, dispatch]);
 
     const handleCreateSubmit = async (title: string, description: string) => {
-      try {
-        const newCardData = {
-          title,
-          description,
-          column: 'To Do',
-          boardId
+        const newCardData:Omit<Task, "_id"> = {
+            title,
+            description,
+            column: 'To Do',
+            boardId
         };
 
-        const response = await axios.post<{ data: { card: Task } }>('/api/cards', newCardData);
-        const newCard = response.data.data.card;
-        setCardData((prevCards) => [...prevCards, newCard]);
+        dispatch(addCard({ cardData: newCardData }));
         setIsModalVisible(false);
-        toast.success("The card was successfully added");
-      } catch (error) {
-        console.error("Error adding new card:", error);
-        toast.error("Error adding new card");
+        !error ? toast.success("The card was successfully added") : toast.error("Error adding new card");
       }
-    }
     
-    const handleDelete = (cardId: string) => {
-      setCardData((prevCards) => prevCards.filter(card => card._id !== cardId));
-    };
-  
+      const filteredCards = useMemo(() => {
+        const uniqueCards = new Map();
+        cardData.forEach((card) => {
+          if (card.column === title && !uniqueCards.has(card._id)) {
+            uniqueCards.set(card._id, card);
+          }
+        });
+        return Array.from(uniqueCards.values());
+      }, [cardData, title]);
+
     return (
             <div>
         <StyledH2>{title}</StyledH2>
        <StyledDiv>
-       {cardData.map(card => (
-             <Card key={card._id} card={card} handleDelete={handleDelete}/>
+       {filteredCards.map(card => (
+             <Card key={card._id} card={card}/>
         ))}
         {title === "To Do" && boardId && 
          <StyledButton onClick={() => setIsModalVisible(true)}>

@@ -28,7 +28,7 @@ const getCardById = (id) => {
 }
 
 const createCard = async({ title, description, column, boardId }) => {
-  const newCard = await Card.create({ title, description, column })
+  const newCard = await Card.create({ title, description, column, boardId })
 
   await Board.updateOne({ _id: boardId }, { $push: { ToDo: newCard._id } });
 

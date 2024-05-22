@@ -30,13 +30,19 @@
  padding: 30px;
  margin-bottom: 30px;
 }
-
+.board-list{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 93%;
+}
 .board{
   display: flex;
   align-items: center;
   gap: 10px;
-  justify-content: space-around;
+  justify-content: space-between;
 }
+
 
 .board-info{
   font-weight: bold;

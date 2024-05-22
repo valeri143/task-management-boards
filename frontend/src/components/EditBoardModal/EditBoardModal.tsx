@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { StyledErrorMessage, StyledField, StyledForm } from "../EditModal/EditModal.styled";
 import { StyledButton } from "../CustomModal/CustomModal.styled";
 import { customStyles } from "../CustomModal/CustomModal.styled";
-import { BoardType } from "../../App";
+import { BoardType } from "../../redux/types/types";
 
 interface EditModalProps {
     isOpen: boolean;
