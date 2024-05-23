@@ -1,10 +1,18 @@
-import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
+import mongoose, { Document, Model, Schema as MongooseSchema } from 'mongoose';
+export interface IBoard extends Document {
+  name: string;
+  ToDo: mongoose.Types.ObjectId[];
+  InProgress: mongoose.Types.ObjectId[];
+  Done: mongoose.Types.ObjectId[];
+}
 
-const board = new Schema(
+const { Schema } = mongoose;
+
+const board: MongooseSchema = new Schema(
   {
     name: {
       type: String,
+      required: true, 
     },
     ToDo: [
       {
@@ -28,6 +36,6 @@ const board = new Schema(
   { versionKey: false}
 );
 
-const Board = mongoose.model("boards", board);
+const Board: Model<IBoard> = mongoose.model<IBoard>("boards", board);
 
-module.exports = Board;
+export default Board

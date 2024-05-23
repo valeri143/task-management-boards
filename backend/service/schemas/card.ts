@@ -1,7 +1,14 @@
-import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
+import mongoose, { Document, Model, Schema as MongooseSchema } from 'mongoose';
+export interface ICard extends Document {
+  title: string;
+  description: string;
+  column: 'To Do' | 'In Progress' | 'Done';
+  boardId: string;
+}
 
-const card = new Schema(
+const { Schema } = mongoose;
+
+const card: MongooseSchema = new Schema(
   {
     title: {
       type: String,
@@ -30,6 +37,6 @@ const card = new Schema(
   { versionKey: false}
 );
 
-const Card = mongoose.model("cards", card);
+const Card: Model<ICard> = mongoose.model<ICard>("cards", card);
 
-module.exports = Card;
+export default Card;

@@ -13,6 +13,7 @@ import BoardIdForm from './components/BoardIdForm/BoardIdForm';
 import Board from './components/Board/Board';
 import './App.css';
 import sprite from './assets/sprite.svg'
+import { removeCardsByBoardId } from './redux/cardsListSlice/cardsListSlice';
 
 
 
@@ -37,7 +38,7 @@ function App(): JSX.Element {
   }, [dispatch]);
 
   const handleCreateBoard = async (values: { name: string }, { resetForm }: { resetForm: () => void }) => {
-      dispatch(addBoard({ name: values.name }));
+      await dispatch(addBoard({ name: values.name }));
       resetForm();
       toast.success('Board created successfully');
      if (error) {
@@ -46,15 +47,17 @@ function App(): JSX.Element {
   };
 
   const handleDeleteBoard = async (boardId: string) => {
-      dispatch(deleteBoard({boardId}));
+    try {
+      dispatch(deleteBoard({ boardId }));
+      dispatch(removeCardsByBoardId(boardId)); 
       toast.success('Board deleted successfully');
-      if(error){
-        toast.error('Error deleting board')
-      }
+    } catch (error) {
+      toast.error('Error deleting board');
+    }
   };
 
   const handleEditBoard = async (boardId: string, newName: string) => {
-      dispatch(editBoard({ boardId, newName }));
+      await dispatch(editBoard({ boardId, newName }));
       toast.success('Board updated successfully');
       if(error){
         toast.error('Error updating board');
@@ -62,10 +65,12 @@ function App(): JSX.Element {
   };
 
   const handleSubmit = async (values: { boardId: string }) => {
-     dispatch(getBoardById({ boardId: values.boardId.trim() }));
-      if(error){
-        toast.error('Invalid board ID');
-      }  
+    try{
+      await dispatch(getBoardById({ boardId: values.boardId.trim() }));
+      toast.success('Board found successfully');
+    }catch (error) {
+      toast.error('Invalid board ID');
+    } 
   };
 
   return (

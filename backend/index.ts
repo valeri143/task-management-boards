@@ -1,55 +1,61 @@
-const express = require("express");
-const cors = require('cors')
-const mongoose = require('mongoose')
+import express, { Application, Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import { boardRouter, cardRouter } from './api';
+import { EndPoints, ErrorMessages, HttpCodes } from './constants';
 
 require('dotenv').config();
 
 
-const app = express();
-// app.get("/api", (req, res) => {
-//   res.json({
-//       message: "Hello from backend!"
-//   })
-// })
+const app: Application = express();
 
 // parse application/json
 app.use(express.json())
 // cors
 app.use(cors())
 
-const routerApi = require('./api/index')
-app.use('/api', routerApi)
+// routes
+app.use(EndPoints.boards, boardRouter)
+app.use(EndPoints.cards, cardRouter)
 
-app.use((_, res, __) => {
-    res.status(404).json({
+// handle 404 errors
+app.use((req: Request, res: Response, next: NextFunction) => {
+    res.status(HttpCodes.NOT_FOUND).json({
       status: 'error',
-      code: 404,
-      message: 'Use api on routes: /api/boards',
-      data: 'Not found',
+      code: HttpCodes.NOT_FOUND,
+      message: `Use api on routes: /${EndPoints.boards} or /${EndPoints.cards}`,
+      data: ErrorMessages.NOT_FOUND,
     })
   })
   
-  app.use((err, _, res, __) => {
+  // error handling middleware
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.log(err.stack)
-    res.status(500).json({
+    res.status(HttpCodes.INTERNAL_SERVER_ERROR).json({
       status: 'fail',
-      code: 500,
+      code: HttpCodes.INTERNAL_SERVER_ERROR,
       message: err.message,
-      data: 'Internal Server Error',
+      data: ErrorMessages.INTERNAL_SERVER_ERROR,
     })
   })
 
 const { PORT } = process.env || 3001;
-const uriDB = process.env.DB_HOST
+const uriDB: string | undefined = process.env.DB_HOST
 
-mongoose.connect(uriDB)
-.then(() =>{
-  console.log("Database connection successful")
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
-  })
-})
-.catch((err) =>{
-  console.log(`Server is not running. Error message: ${err.message}`),
-process.exit(1)
-})
+if (typeof uriDB === 'string') {
+  mongoose.connect(uriDB)
+      .then(() => {
+          console.log("Database connection successful");
+          app.listen(PORT, () => {
+              console.log(`Server is running on port ${PORT}`);
+          });
+      })
+      .catch((err) => {
+          console.log(`Server is not running. Error message: ${err.message}`);
+          process.exit(1);
+      });
+} else {
+  console.log("URI DB is not defined");
+  process.exit(1);
+}
+

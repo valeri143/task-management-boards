@@ -26,6 +26,9 @@ const cardsListSlice = createSlice({
         state.error = null;
         state.isLoading = false;
       },
+      removeCardsByBoardId(state, action: PayloadAction<string>) {
+        state.cards = state.cards.filter(card => card.boardId !== action.payload);
+      }
     },
     extraReducers: builder => {
         builder
@@ -65,5 +68,5 @@ const cardsListSlice = createSlice({
       }
 });
 
-export const { resetCards } = cardsListSlice.actions;
+export const { resetCards, removeCardsByBoardId } = cardsListSlice.actions;
 export const cardsListReducer = cardsListSlice.reducer;
