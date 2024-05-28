@@ -11,8 +11,13 @@ export const StyledDiv = styled.div`
     min-height: 100px;
     margin-bottom: 20px;
     transition: all 0.3s ease;
+    cursor: grab;
     &:hover, &:focus {
     box-shadow: inset 0px -20px 20px #ffffff;
+    }
+    &:active {
+    opacity: 0.7;
+    border: 1px solid black;
     }
 `
 

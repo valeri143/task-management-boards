@@ -50,7 +50,23 @@ const getById = async (req: Request, res: Response) => {
         })
   }
   
+  const updateStatus = async (req: Request, res: Response) => {
+    const { boardId, cardId } = req.params;
+    const { newStatus } = req.body;
+  
+    if (!['To Do', 'In Progress', 'Done'].includes(newStatus)) {
+      throw createHttpError(HttpCodes.BAD_REQUEST, `Invalid status: ${newStatus}`);
+    }
+  
+    const result = await cardsService.updateCardStatus(boardId, cardId, newStatus);
+    res.json({
+      status: 'success',
+      code: HttpCodes.OK,
+      data: result,
+    });
+  }
+  
   
 
-  export { getById, create, remove, update }
+  export { getById, create, remove, update, updateStatus }
   

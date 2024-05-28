@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { fetchBoards, getBoardById, addBoard, editBoard, deleteBoard } from './redux/boardsListSlice/operations';
-import { selectBoards, selectIsLoading, selectError, selectCurrentBoard } from './redux/boardsListSlice/selectors';
-import { ToastContainer, toast } from 'react-toastify';
+import { selectBoards, selectIsLoading, selectCurrentBoard } from './redux/boardsListSlice/selectors';
+import { removeCardsByBoardId } from './redux/cardsListSlice/cardsListSlice';
+import { ToastContainer } from 'react-toastify';
 import { BoardType } from './redux/types/types';
 import 'react-toastify/dist/ReactToastify.css';
+import { TailSpin } from 'react-loader-spinner';
 import logo from './logo.svg';
 import CreateBoardForm from './components/CreateBoardForm/CreateBoardForm';
 import EditBoardModal from './components/EditBoardModal/EditBoardModal';
@@ -13,15 +15,11 @@ import BoardIdForm from './components/BoardIdForm/BoardIdForm';
 import Board from './components/Board/Board';
 import './App.css';
 import sprite from './assets/sprite.svg'
-import { removeCardsByBoardId } from './redux/cardsListSlice/cardsListSlice';
-
-
 
 function App(): JSX.Element {
   const boards = useAppSelector(selectBoards);
   const currentBoard = useAppSelector(selectCurrentBoard);
   const isLoading = useAppSelector(selectIsLoading);
-  const error = useAppSelector(selectError);
   const dispatch = useAppDispatch();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -40,41 +38,38 @@ function App(): JSX.Element {
   const handleCreateBoard = async (values: { name: string }, { resetForm }: { resetForm: () => void }) => {
       await dispatch(addBoard({ name: values.name }));
       resetForm();
-      toast.success('Board created successfully');
-     if (error) {
-      toast.error('Error creating board');
-    }
   };
 
   const handleDeleteBoard = async (boardId: string) => {
-    try {
       dispatch(deleteBoard({ boardId }));
       dispatch(removeCardsByBoardId(boardId)); 
-      toast.success('Board deleted successfully');
-    } catch (error) {
-      toast.error('Error deleting board');
-    }
   };
 
   const handleEditBoard = async (boardId: string, newName: string) => {
       await dispatch(editBoard({ boardId, newName }));
-      toast.success('Board updated successfully');
-      if(error){
-        toast.error('Error updating board');
-      }
   };
 
   const handleSubmit = async (values: { boardId: string }) => {
-    try{
       await dispatch(getBoardById({ boardId: values.boardId.trim() }));
-      toast.success('Board found successfully');
-    }catch (error) {
-      toast.error('Invalid board ID');
-    } 
   };
 
   return (
     <div className="App">
+      {isLoading && (
+         <div className="loader-wrapper">
+         <div className="blur-background"></div>
+         <TailSpin
+           height={80}
+           width={80}
+           color="#000000"
+           ariaLabel="tail-spin-loading"
+           radius={1}
+           wrapperStyle={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+           wrapperClass=""
+           visible={true}
+         />
+       </div>
+      )}
       <header>
         <CreateBoardForm handleCreateBoard={handleCreateBoard} />
         <ul className='board-list'>

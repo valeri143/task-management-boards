@@ -3,4 +3,5 @@ export const enum EndPoints {
     dynamicId = '/:id',
     boards = '/api/boards',
     cards = '/api/cards',
+    boardCardStatus = '/:boardId/:cardId',
 }

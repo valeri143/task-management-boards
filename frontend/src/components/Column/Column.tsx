@@ -1,24 +1,25 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { addCard, getCardById } from "../../redux/cardsListSlice/operations";
-import { selectCards, selectError } from "../../redux/cardsListSlice/selectors";
+import { selectCards } from "../../redux/cardsListSlice/selectors";
 import { resetCards } from "../../redux/cardsListSlice/cardsListSlice";
-import { toast } from "react-toastify";
 import { Task } from "../../redux/types/types";
 import Card from "../Card/Card";
 import EditModal from "../EditModal/EditModal";
 import { StyledDiv, StyledH2, StyledButton } from "./Column.styled";
 import sprite from "../../assets/sprite.svg"
+import DropArea from "../DropArea/DropArea";
 
 interface ColumnProps {
-    title: string;
+    title: 'To Do' | 'In Progress' | 'Done';
     cards: string[];
     boardId: string;
+    setActiveCard: any;
+    handleDrop: (status: "To Do" | "In Progress" | "Done") => void;
   }
   
-  const Column: React.FC<ColumnProps> = ({ title, cards, boardId }) => {
+  const Column: React.FC<ColumnProps> = ({ title, cards, boardId, setActiveCard, handleDrop }) => {
     const cardData = useAppSelector(selectCards);
-    const error = useAppSelector(selectError);
     const dispatch = useAppDispatch();
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -28,6 +29,7 @@ interface ColumnProps {
           dispatch(getCardById({cardId}));
         })
     }, [cards, dispatch]);
+    
 
     const handleCreateSubmit = async (title: string, description: string) => {
         const newCardData:Omit<Task, "_id"> = {
@@ -39,7 +41,6 @@ interface ColumnProps {
 
         dispatch(addCard({ cardData: newCardData }));
         setIsModalVisible(false);
-        !error ? toast.success("The card was successfully added") : toast.error("Error adding new card");
       }
     
       const filteredCards = useMemo(() => {
@@ -53,11 +54,15 @@ interface ColumnProps {
       }, [cardData, title]);
 
     return (
-            <div>
+        <div>
         <StyledH2>{title}</StyledH2>
        <StyledDiv>
-       {filteredCards.map(card => (
-             <Card key={card._id} card={card}/>
+        <DropArea handleDrop={() => handleDrop(title)}/>
+       {filteredCards.map((card, index) => (
+            <React.Fragment key={card._id}>
+             <Card card={card} setActiveCard={setActiveCard}/>
+             <DropArea handleDrop={() => handleDrop(title)}/>
+            </React.Fragment>
         ))}
         {title === "To Do" && boardId && 
          <StyledButton onClick={() => setIsModalVisible(true)}>

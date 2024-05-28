@@ -1,8 +1,6 @@
 import React,{ useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useAppDispatch} from '../../redux/hooks';
 import { editCard, deleteCard } from "../../redux/cardsListSlice/operations";
-import { selectError } from "../../redux/cardsListSlice/selectors";
-import { toast } from 'react-toastify';
 import { Task } from '../../redux/types/types';
 import CustomModal from '../CustomModal/CustomModal';
 import EditModal from '../EditModal/EditModal';
@@ -12,26 +10,24 @@ import sprite from '../../assets/sprite.svg'
 
 interface TaskProps {
   card: Task;
+  setActiveCard: any;
 }
 
-const Card: React.FC<TaskProps> = ({ card}) => {
-  const error = useAppSelector(selectError);
+const Card: React.FC<TaskProps> = ({ card, setActiveCard}) => {
   const dispatch = useAppDispatch();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const onDelete = async () => {
     dispatch(deleteCard({ cardId: card._id }));
-    !error ? toast.success('The card was successfully deleted') : toast.error('Error deleting card');
   };
 
   const handleEditSubmit = async (title: string, description: string) => {
     dispatch(editCard({ cardId: card._id, title, description }));
       setIsEditModalVisible(false);
-      !error ? toast.success('The card was successfully edited') : toast.error('Error editing card');
   };
 
   return (
-    <StyledDiv>
+    <StyledDiv draggable onDragStart={() => setActiveCard(card._id)} onDragEnd={() => setActiveCard(null)}>
       <StyledH3>{card.title}</StyledH3>
       <StyledP>{card.description}</StyledP>
       <StyledSvgDiv>

@@ -1,30 +1,20 @@
 .App {
   text-align: center;
 }
-
-.App-logo {
-  pointer-events: none;
-  width: 50px;
+.loader-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-float infinite 3s ease-in-out;
-  }
+.blur-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(8px); 
 }
-
-@keyframes App-logo-float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
-
 .container {
  background-color:  #007bff;
  padding: 30px;
@@ -50,4 +40,20 @@
 
 .board-button{
   margin-right: 10px;
+}
+
+.drop-area{
+  width: 100%;
+  height: 100px;
+  color: #cecece;
+  border: 1px dashed #cecece;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 15px;
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+.hide-drop{
+  opacity: 0;
 }

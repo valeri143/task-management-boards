@@ -28,6 +28,7 @@ export const StyledButton = styled.button`
     scale: 1.1;
   }
 `
+
 export const fadeIn = keyframes`
   from {
     opacity: 0;

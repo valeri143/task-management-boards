@@ -23,7 +23,6 @@ export const StyledField = styled(Field)`
 
 export const StyledButton = styled.button`
     font-weight: bold;
-    cursor: pointer;
 	border: 1px solid #cecece;
 	background: #f6f6f6;
 	box-shadow: inset 0px 20px 20px #ffffff;

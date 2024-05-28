@@ -1,18 +1,23 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BoardType, ApiResponse } from '../types/types';
+import {toast} from 'react-toastify';
 
 export const fetchBoards = createAsyncThunk<BoardType[], void, { rejectValue: string }>(
   'boards/fetchAll',
   async (_, thunkAPI ) => {
     try {
-        const response = await axios.get<ApiResponse<{ boards: BoardType[] }>>('api/boards');
+      const response = await axios.get<ApiResponse<{ boards: BoardType[] }>>('api/boards');
       return response.data.data.boards;
-    } catch (e ) {
-        if (e instanceof Error) {
-            return thunkAPI.rejectWithValue(e.message);
-          }
-          return thunkAPI.rejectWithValue('An unknown error occurred');
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+          const error = e.response?.data?.message || 'An unknown error occurred';
+          toast.error(error);
+          return thunkAPI.rejectWithValue(error);
+    } else {
+        console.error(e);
+        return thunkAPI.rejectWithValue('An unknown error occurred');
+    }
     }
   }
 );
@@ -24,10 +29,14 @@ export const getBoardById = createAsyncThunk<BoardType, { boardId: string }, { r
         const response = await axios.get<ApiResponse<{ board: BoardType }>>(`api/boards/${boardId}`);
         return response.data.data.board;
       } catch (e) {
-        if (e instanceof Error) {
-            return thunkAPI.rejectWithValue(e.message);
-          }
+        if (axios.isAxiosError(e)) {
+          const error = e.response?.data?.message || 'An unknown error occurred';
+          toast.error(error);
+          return thunkAPI.rejectWithValue(error);
+      } else {
+          console.error(e);
           return thunkAPI.rejectWithValue('An unknown error occurred');
+      }
       }
     }
   );
@@ -40,10 +49,14 @@ export const addBoard = createAsyncThunk<BoardType, { name: string }, { rejectVa
       const response = await axios.post<ApiResponse<{ board: BoardType }>>('/api/boards', { name });
       return response.data.data.board;
     } catch (e) {
-        if (e instanceof Error) {
-            return thunkAPI.rejectWithValue(e.message);
-          }
-          return thunkAPI.rejectWithValue('An unknown error occurred');
+      if (axios.isAxiosError(e)) {
+        const error = e.response?.data?.message || 'An unknown error occurred';
+        toast.error(error);
+        return thunkAPI.rejectWithValue(error);
+    } else {
+        console.error(e);
+        return thunkAPI.rejectWithValue('An unknown error occurred');
+    }
     }
   }
 );
@@ -55,10 +68,14 @@ export const editBoard = createAsyncThunk<BoardType, { boardId: string, newName:
         const response = await axios.put<ApiResponse<{ board: BoardType }>>(`/api/boards/${boardId}`, { id: boardId, name: newName });
         return response.data.data.board;
       } catch (e) {
-        if (e instanceof Error) {
-            return thunkAPI.rejectWithValue(e.message);
-          }
+        if (axios.isAxiosError(e)) {
+          const error = e.response?.data?.message || 'An unknown error occurred';
+          toast.error(error);
+          return thunkAPI.rejectWithValue(error);
+      } else {
+          console.error(e);
           return thunkAPI.rejectWithValue('An unknown error occurred');
+      }
       }
     }
   );
@@ -70,10 +87,14 @@ export const deleteBoard = createAsyncThunk<string, { boardId: string }, { rejec
       await axios.delete(`/api/boards/${boardId}`);
       return boardId;
     } catch (e) {
-        if (e instanceof Error) {
-            return thunkAPI.rejectWithValue(e.message);
-          }
-          return thunkAPI.rejectWithValue('An unknown error occurred');
+      if (axios.isAxiosError(e)) {
+        const error = e.response?.data?.message || 'An unknown error occurred';
+          toast.error(error);
+          return thunkAPI.rejectWithValue(error);
+    } else {
+        console.error(e);
+        return thunkAPI.rejectWithValue('An unknown error occurred');
+    }
     }
   }
 );

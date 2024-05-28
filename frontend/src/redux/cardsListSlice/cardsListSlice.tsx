@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getCardById, addCard, editCard, deleteCard } from "./operations";
+import { getCardById, addCard, editCard, deleteCard, updateCardStatus } from "./operations";
 import { CardsState, Task } from "../types/types";
 
 const initialState: CardsState = {
@@ -35,7 +35,10 @@ const cardsListSlice = createSlice({
           .addCase(getCardById.pending, handlePending)
           .addCase(getCardById.fulfilled, (state, action: PayloadAction<Task>) => {
             state.isLoading = false;
-            state.cards.push(action.payload);
+            const uniqueCardIds = new Set(state.cards.map((card) => card._id));
+        if (!uniqueCardIds.has(action.payload._id)) {
+          state.cards.push(action.payload);
+        }
             state.error = null;
           })
           .addCase(getCardById.rejected, handleRejected)
@@ -64,7 +67,17 @@ const cardsListSlice = createSlice({
             state.cards = state.cards.filter(card => card._id !== action.payload);
             state.error = null;
           })
-          .addCase(deleteCard.rejected, handleRejected);
+          .addCase(deleteCard.rejected, handleRejected)
+          .addCase(updateCardStatus.pending, handlePending)
+          .addCase(updateCardStatus.fulfilled, (state, action: PayloadAction<Task>) => {
+            state.isLoading = false;
+             const index = state.cards.findIndex(card => card._id === action.payload._id);
+            if (index !== -1) {
+                state.cards[index] = action.payload;
+             }
+                 state.error = null;
+           })
+      .addCase(updateCardStatus.rejected, handleRejected);
       }
 });
 
